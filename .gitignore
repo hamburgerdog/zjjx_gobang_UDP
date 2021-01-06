@@ -1,0 +1,7 @@
+../zjjx_gobang_maven/.idea/
+gobang-swing.iml
+out/
+.DS_Store
+*.iml
+**/jdbcconfig.properties
+
