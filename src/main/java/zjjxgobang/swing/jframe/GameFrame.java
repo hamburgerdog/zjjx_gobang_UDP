@@ -13,10 +13,12 @@ import java.util.ArrayList;
 /**
  * 棋盘
  */
+@org.springframework.stereotype.Component
 public class GameFrame extends JFrame {
+
     private int rows = 20;
     private int cols = 20;
-    ArrayList<JGamePanel> jPanelArrayList = new ArrayList<>();
+    private ArrayList<JGamePanel> jPanelArrayList = new ArrayList<>();
 
     UserInfoPanel player1Panel;
     UserInfoPanel player2Panel;
@@ -34,8 +36,9 @@ public class GameFrame extends JFrame {
     }
 
     JPanel gobangJPanel = new GobangPanel();
-    public GameFrame(String title){
-        super(title);
+
+    public GameFrame() throws Exception {
+        super("游戏界面");
 
         this.setResizable(true);
         this.setSize(800, 605);
@@ -47,7 +50,8 @@ public class GameFrame extends JFrame {
 
         JGamePanel jGamePanelTmp;
         for (int i =0;i<rows*cols;i++){
-            jGamePanelTmp = new JGamePanel(i,this);
+            jGamePanelTmp = new JGamePanel();
+            jGamePanelTmp.setId(i);
             jPanelArrayList.add(jGamePanelTmp);
             gobangJPanel.add(jPanelArrayList.get(i));
         }

@@ -1,6 +1,8 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import zjjxgobang.swing.listener.FrameSetUndecorated;
 
 import javax.imageio.ImageIO;
@@ -9,13 +11,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+@Component
 public class FindGameFrame extends JFrame {
     JPanel jPanel = new JPanel();
     private int xOld = 0;
     private int yOld = 0;
 
-    public FindGameFrame(String title) throws HeadlessException {
-        super(title);
+    public FindGameFrame() throws HeadlessException {
         this.setResizable(false);
         this.setSize(400, 300);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

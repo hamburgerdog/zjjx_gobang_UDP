@@ -1,6 +1,10 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Scope;
+import zjjxgobang.game.GobangClient;
 import zjjxgobang.swing.jpanel.ConfirmJPanel;
 import zjjxgobang.swing.jpanel.InputNormalJPanel;
 
@@ -11,14 +15,24 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.Socket;
 
+@org.springframework.stereotype.Component
 public class LoginFrame extends JFrame {
+    public LoginFrame thisFrame = this;
+
+    public GobangClient client;
+
+    public void setClient(GobangClient client) {
+        this.client = client;
+    }
+
+    @Autowired
+    public FindGameFrame findGameFrame;
 
     private LoginFrame loginFrame = this;
 
-    public LoginFrame(String title) throws HeadlessException {
-        super(title);
+    public LoginFrame() throws HeadlessException {
+        super("登录用户");
         this.setSize(new Dimension(300, 200));
         this.setResizable(true);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -43,6 +57,26 @@ public class LoginFrame extends JFrame {
         verticalBox.add(confirmJpanel);
 
         contentJpanel.add(verticalBox);
+
+        confirmButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String email = emailJpanel.getMsg();
+                String pwd = pwdJpanel.getMsg();
+                client.setEmail(email);
+                boolean login = client.sendMsg("login;"+email+";"+pwd+";");
+                if (!login) {
+                    pwdJpanel.cleanText();
+                    JOptionPane.showMessageDialog(null, "服务器拒绝登录", "登录失败", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }else {
+                    thisFrame.setVisible(false);
+                    findGameFrame.setVisible(true);
+                    Thread thread = new Thread(new FindGameTask());
+                    thread.start();
+                }
+            }
+        });
     }
 
     private class LoginJPanel extends JPanel {
@@ -59,6 +93,17 @@ public class LoginFrame extends JFrame {
                 g2d.dispose();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private class FindGameTask implements Runnable{
+        @Override
+        public void run() {
+            boolean findGame = client.findGame();
+            if (!findGame){
+                JOptionPane.showMessageDialog(null, "服务器找不到对局", "创建对局失败", JOptionPane.ERROR_MESSAGE);
+                return;
             }
         }
     }

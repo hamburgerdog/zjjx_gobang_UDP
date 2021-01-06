@@ -1,6 +1,8 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import zjjxgobang.game.GobangClient;
 
 import javax.imageio.ImageIO;
@@ -12,13 +14,27 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
+@org.springframework.stereotype.Component
 public class UserFrame extends JFrame {
 
-    GobangClient gobangClient ;
+    private GobangClient client;
 
-    public UserFrame(String title) throws HeadlessException {
-        super(title);
-        this.gobangClient = gobangClient;
+    public GobangClient getClient() {
+        return client;
+    }
+
+    public void setClient(GobangClient client) {
+        this.client = client;
+    }
+
+    @Autowired
+    LoginFrame loginFrame;
+
+    @Autowired
+    RegisterFrame registerFrame;
+
+    public UserFrame() throws HeadlessException {
+        super("欢迎来到欢乐五子棋");
         this.setSize(new Dimension(600,500));
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -27,27 +43,27 @@ public class UserFrame extends JFrame {
         rootPanel.setSize(new Dimension(600,500));
         rootPanel.setLayout(new BorderLayout());
 
-            JPanel centerPanel = new UserJPanel();
-            centerPanel.setLayout(new BorderLayout());
-            centerPanel.setSize(new Dimension(600,200));
+        JPanel centerPanel = new UserJPanel();
+        centerPanel.setLayout(new BorderLayout());
+        centerPanel.setSize(new Dimension(600,200));
 
 
-                JButton loginButton = new JButton("登录");
-                loginButton.setSize(new Dimension(80,60));
-                JButton registerButton = new JButton("注册");
-                registerButton.setSize(new Dimension(80,60));
+        JButton loginButton = new JButton("登录");
+        loginButton.setSize(new Dimension(80,60));
+        JButton registerButton = new JButton("注册");
+        registerButton.setSize(new Dimension(80,60));
 
-            Box verticalBox = Box.createVerticalBox();
+        Box verticalBox = Box.createVerticalBox();
 
-                Box horizontalBox = Box.createHorizontalBox();
-                Component centerSplit = Box.createHorizontalStrut(40);
-                horizontalBox.add(loginButton);
-                horizontalBox.add(centerSplit);
-                horizontalBox.add(registerButton);
+        Box horizontalBox = Box.createHorizontalBox();
+        Component centerSplit = Box.createHorizontalStrut(40);
+        horizontalBox.add(loginButton);
+        horizontalBox.add(centerSplit);
+        horizontalBox.add(registerButton);
 
-            Component topMargin = Box.createVerticalStrut(200);
-            verticalBox.add(topMargin);
-            verticalBox.add(horizontalBox);
+        Component topMargin = Box.createVerticalStrut(200);
+        verticalBox.add(topMargin);
+        verticalBox.add(horizontalBox);
 
         centerPanel.add(verticalBox,BorderLayout.CENTER);
 
@@ -73,7 +89,7 @@ public class UserFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                LoginFrame loginFrame = new LoginFrame("用户登录");
+                loginFrame.setClient(client);
                 loginFrame.setVisible(true);
             }
         });
@@ -83,7 +99,7 @@ public class UserFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                RegisterFrame registerFrame = new RegisterFrame("用户注册");
+                registerFrame.setGobangClient(client);
                 registerFrame.setVisible(true);
             }
         });

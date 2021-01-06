@@ -1,6 +1,9 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import zjjxgobang.game.GobangClient;
 import zjjxgobang.swing.jpanel.ConfirmJPanel;
 import zjjxgobang.swing.jpanel.InputNormalJPanel;
 
@@ -13,12 +16,27 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
 
+@org.springframework.stereotype.Component
 public class RegisterFrame extends JFrame {
+    @Autowired
+    private FindGameFrame findGameFrame;
+
+    private RegisterFrame thisFrame = this;
+
+    private GobangClient gobangClient;
+
+    public GobangClient getGobangClient() {
+        return gobangClient;
+    }
+
+    public void setGobangClient(GobangClient gobangClient) {
+        this.gobangClient = gobangClient;
+    }
 
     private RegisterFrame registerFrame = this ;
 
-    public RegisterFrame(String title) throws HeadlessException {
-        super(title);
+    public RegisterFrame() throws HeadlessException {
+        super("注册窗口");
         this.setSize(new Dimension(300, 200));
         this.setResizable(true);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -49,8 +67,7 @@ public class RegisterFrame extends JFrame {
         confirmButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println(emailJpanel.getMsg());
-
+                String email = emailJpanel.getMsg();
                 String pwd = pwdJpanel.getMsg();
                 String rePwd = reconfirmPwdJpanel.getMsg();
 
@@ -60,12 +77,28 @@ public class RegisterFrame extends JFrame {
                             JOptionPane.WARNING_MESSAGE);
                     pwdJpanel.cleanText();
                     reconfirmPwdJpanel.cleanText();
+                }else {
+                    boolean canRegister = gobangClient.sendMsg("register;" + email + ";" + pwd + ";");
+                    if (!canRegister){
+                        emailJpanel.cleanText();
+                        pwdJpanel.cleanText();
+                        reconfirmPwdJpanel.cleanText();
+                        JOptionPane.showMessageDialog(null, "服务器拒绝注册", "注册失败", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }else {
+                        findGameFrame.setVisible(true);
+                        thisFrame.setVisible(false);
+                        boolean findGame = gobangClient.findGame();
+                        if (!findGame){
+                            JOptionPane.showMessageDialog(null, "服务器找不到对局", "创建对局失败", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
                 }
-                System.out.println(pwd);
-                System.out.println(rePwd);
             }
         });
     }
+
 
     private class RegisterJPanel extends JPanel {
         @Override

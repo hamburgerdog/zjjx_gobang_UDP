@@ -1,5 +1,6 @@
 package zjjxgobang.dao;
 
+import org.springframework.stereotype.Repository;
 import zjjxgobang.pojo.GobangPlayer;
 import org.apache.ibatis.annotations.Param;
 
