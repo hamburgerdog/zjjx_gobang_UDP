@@ -1,7 +1,6 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
-import zjjxgobang.server.GobangClient;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -9,7 +8,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 

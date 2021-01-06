@@ -1,7 +1,8 @@
 package zjjxgobang.dao;
 
-import zjjxgobang.jBean.GobangPlayer;
+import zjjxgobang.pojo.GobangPlayer;
 import org.apache.ibatis.annotations.Param;
+
 
 public interface GobangPlayerDao {
     public GobangPlayer searchPlayerByEmail(String email);

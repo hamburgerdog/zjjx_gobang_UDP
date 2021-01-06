@@ -1,14 +1,12 @@
 package zjjxgobang.swing.jpanel;
 
 import org.apache.ibatis.io.Resources;
-import zjjxgobang.jBean.Gobang;
 import zjjxgobang.swing.jframe.GameFrame;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 /**

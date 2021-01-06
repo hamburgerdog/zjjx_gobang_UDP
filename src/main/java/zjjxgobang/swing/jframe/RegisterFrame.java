@@ -1,8 +1,6 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
-import zjjxgobang.jBean.Player;
-import zjjxgobang.server.GobangClient;
 import zjjxgobang.swing.jpanel.ConfirmJPanel;
 import zjjxgobang.swing.jpanel.InputNormalJPanel;
 
@@ -12,18 +10,15 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 
 public class RegisterFrame extends JFrame {
 
-    private GobangClient gobangClient;
     private RegisterFrame registerFrame = this ;
 
-    public RegisterFrame(String title, GobangClient gobangClient,UserFrame userFrame) throws HeadlessException {
+    public RegisterFrame(String title,UserFrame userFrame) throws HeadlessException {
         super(title);
-        this.gobangClient = gobangClient;
         this.setSize(new Dimension(300, 200));
         this.setResizable(true);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -65,37 +60,7 @@ public class RegisterFrame extends JFrame {
                             JOptionPane.WARNING_MESSAGE);
                     pwdJpanel.cleanText();
                     reconfirmPwdJpanel.cleanText();
-                } else {
-                    Player player = gobangClient.getPlayer();
-                    if (player.getPlayerSocket() == null) {
-                        Socket socket = new Socket();
-                        try {
-                            socket.connect(gobangClient.getAddress());
-                        } catch (IOException ioException) {
-                            ioException.printStackTrace();
-                        }
-                        player.setPlayerSocket(socket);
-                    }
-                    player.setName(emailJpanel.getMsg());
-                    player.setPassword(pwdJpanel.getMsg());
-                    player.sentRegister();
-                    if (player.receviceConnectionMsg()) {
-                        registerFrame.setVisible(false);
-                        userFrame.setVisible(false);
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                gobangClient.createGame();
-                            }
-                        });
-                    } else {
-                        JOptionPane.showMessageDialog(null, "与服务器连接失败",
-                                "连接错误", JOptionPane.ERROR_MESSAGE);
-                        pwdJpanel.cleanText();
-                        reconfirmPwdJpanel.cleanText();
-                    }
                 }
-
                 System.out.println(pwd);
                 System.out.println(rePwd);
             }

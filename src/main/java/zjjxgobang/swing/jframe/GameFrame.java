@@ -1,17 +1,13 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
-import zjjxgobang.jBean.Gobang;
-import zjjxgobang.jBean.Player;
 import zjjxgobang.swing.jpanel.JGamePanel;
 import zjjxgobang.swing.listener.JGamePanelMouseListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -21,8 +17,6 @@ import java.util.ArrayList;
 public class GameFrame extends JFrame {
     private int rows = 20;
     private int cols = 20;
-    private Gobang gobang;
-    private Player player;
     ArrayList<JGamePanel> jPanelArrayList = new ArrayList<>();
 
     UserInfoPanel player1Panel;
@@ -36,24 +30,13 @@ public class GameFrame extends JFrame {
         return player2Panel;
     }
 
-    public Gobang getGobang() {
-        return gobang;
-    }
-    public Player getPlayer() {
-        return player;
-    }
-
     public ArrayList<JGamePanel> getjPanelArrayList() {
         return jPanelArrayList;
     }
 
     JPanel gobangJPanel = new GobangPanel();
-    public GameFrame(String title,Gobang gobang,Player player){
+    public GameFrame(String title){
         super(title);
-
-        this.gobang = gobang;
-        this.player = player;
-        gobang.setPlayer(player);
 
         this.setResizable(true);
         this.setSize(800, 605);

@@ -1,7 +1,9 @@
 package zjjxgobang;
 
-import zjjxgobang.server.GobangClient;
+import zjjxgobang.game.GobangClient;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 
@@ -10,8 +12,9 @@ import java.net.InetSocketAddress;
  */
 public class GamePlayer1 {
     public static void main(String[] args) {
-        InetSocketAddress serverAddress = new InetSocketAddress("localhost", 3300);
-        GobangClient gobangClient = new GobangClient(serverAddress);
+        String inetAddress = "localhost";
+        int port = 3300 ;
+        GobangClient gobangClient = new GobangClient();
 
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {

@@ -1,4 +1,4 @@
-package zjjxgobang.jBean;
+package zjjxgobang.pojo;
 
 public class GobangPlayer {
     private String email;

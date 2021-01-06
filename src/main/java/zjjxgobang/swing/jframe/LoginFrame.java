@@ -1,8 +1,6 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
-import zjjxgobang.jBean.Player;
-import zjjxgobang.server.GobangClient;
 import zjjxgobang.swing.jpanel.ConfirmJPanel;
 import zjjxgobang.swing.jpanel.InputNormalJPanel;
 
@@ -12,17 +10,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class LoginFrame extends JFrame {
 
-    private GobangClient gobangClient;
     private LoginFrame loginFrame = this;
 
-    public LoginFrame(String title, GobangClient gobangClient,UserFrame userFrame) throws HeadlessException {
+    public LoginFrame(String title,UserFrame userFrame) throws HeadlessException {
         super(title);
         this.setSize(new Dimension(300, 200));
         this.setResizable(true);
@@ -48,40 +43,6 @@ public class LoginFrame extends JFrame {
         verticalBox.add(confirmJpanel);
 
         contentJpanel.add(verticalBox);
-
-        confirmButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Player player = gobangClient.getPlayer();
-                if (player.getPlayerSocket() == null) {
-                    Socket socket = new Socket();
-                    try {
-                        socket.connect(gobangClient.getAddress());
-                    } catch (IOException ioException) {
-                        ioException.printStackTrace();
-                    }
-                    player.setPlayerSocket(socket);
-                }
-                player.setName(emailJpanel.getMsg());
-                player.setPassword(pwdJpanel.getMsg());
-                player.sentLogin();
-                if (player.receviceConnectionMsg()) {
-                    loginFrame.setVisible(false);
-                    userFrame.setVisible(false);
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            gobangClient.createGame();
-                        }
-                    });
-                } else {
-                    JOptionPane.showMessageDialog(null, "连接服务器失败，请重新输入密码或注册用户",
-                            "登录错误", JOptionPane.ERROR_MESSAGE);
-                    emailJpanel.cleanText();
-                    pwdJpanel.cleanText();
-                }
-            }
-        });
     }
 
     private class LoginJPanel extends JPanel {

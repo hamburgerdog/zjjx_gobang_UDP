@@ -1,7 +1,5 @@
 package zjjxgobang.swing.listener;
 
-import zjjxgobang.jBean.Gobang;
-import zjjxgobang.jBean.Player;
 import zjjxgobang.swing.jframe.GameFrame;
 import zjjxgobang.swing.jpanel.JGamePanel;
 
