@@ -21,7 +21,6 @@ public class JGamePanel extends JPanel {
     public final Color enterColor = new Color(165, 149, 166);
 
     private GameFrame parent;
-    private Gobang gobang;
 
     public JGamePanel(int id,GameFrame parent) {
         this.Id = id + 1;
@@ -29,7 +28,6 @@ public class JGamePanel extends JPanel {
         this.setOpaque(false);
 
         this.parent = parent;
-        this.gobang = parent.getGobang();
     }
 
     @Override
@@ -40,13 +38,6 @@ public class JGamePanel extends JPanel {
     }
 
     public void updateGobang(Color color){
-        if (!gobang.doPutGobang(this.Id) && !gobang.isGameOver()) {
-            drawGobang(color);
-            gobang.putGobang(this.Id,color);
-        } else if (gobang.isGameOver()) {
-            System.out.println("game over");
-            System.out.println(gobang.getGobangMap());
-        }
     }
 
     public void drawGobang(Color color){

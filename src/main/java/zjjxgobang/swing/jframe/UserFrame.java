@@ -1,6 +1,7 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
+import zjjxgobang.game.GobangClient;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -14,9 +15,8 @@ import java.io.InputStream;
 public class UserFrame extends JFrame {
 
     GobangClient gobangClient ;
-    UserFrame userFrame = this;
 
-    public UserFrame(String title,GobangClient gobangClient) throws HeadlessException {
+    public UserFrame(String title) throws HeadlessException {
         super(title);
         this.gobangClient = gobangClient;
         this.setSize(new Dimension(600,500));
@@ -73,7 +73,7 @@ public class UserFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                LoginFrame loginFrame = new LoginFrame("用户登录",gobangClient,userFrame);
+                LoginFrame loginFrame = new LoginFrame("用户登录");
                 loginFrame.setVisible(true);
             }
         });
@@ -83,7 +83,7 @@ public class UserFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                RegisterFrame registerFrame = new RegisterFrame("用户注册",gobangClient,userFrame);
+                RegisterFrame registerFrame = new RegisterFrame("用户注册");
                 registerFrame.setVisible(true);
             }
         });

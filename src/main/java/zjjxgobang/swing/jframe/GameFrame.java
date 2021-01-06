@@ -2,7 +2,6 @@ package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
 import zjjxgobang.swing.jpanel.JGamePanel;
-import zjjxgobang.swing.listener.JGamePanelMouseListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -50,8 +49,6 @@ public class GameFrame extends JFrame {
         for (int i =0;i<rows*cols;i++){
             jGamePanelTmp = new JGamePanel(i,this);
             jPanelArrayList.add(jGamePanelTmp);
-            JGamePanelMouseListener jGamePanelMouseListener = new JGamePanelMouseListener(jGamePanelTmp,this);
-            jGamePanelTmp.addMouseListener(jGamePanelMouseListener);
             gobangJPanel.add(jPanelArrayList.get(i));
         }
 

@@ -17,7 +17,7 @@ public class RegisterFrame extends JFrame {
 
     private RegisterFrame registerFrame = this ;
 
-    public RegisterFrame(String title,UserFrame userFrame) throws HeadlessException {
+    public RegisterFrame(String title) throws HeadlessException {
         super(title);
         this.setSize(new Dimension(300, 200));
         this.setResizable(true);

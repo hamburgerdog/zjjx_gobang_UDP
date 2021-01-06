@@ -17,7 +17,7 @@ public class LoginFrame extends JFrame {
 
     private LoginFrame loginFrame = this;
 
-    public LoginFrame(String title,UserFrame userFrame) throws HeadlessException {
+    public LoginFrame(String title) throws HeadlessException {
         super(title);
         this.setSize(new Dimension(300, 200));
         this.setResizable(true);

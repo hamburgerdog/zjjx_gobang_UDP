@@ -1,6 +1,5 @@
 package zjjxgobang.swing.listener;
 
-import zjjxgobang.swing.jframe.FindGameFrame;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;

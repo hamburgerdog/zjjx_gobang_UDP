@@ -2,14 +2,11 @@ package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
 import zjjxgobang.swing.listener.FrameSetUndecorated;
-import zjjxgobang.swing.listener.WindowsClosed;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 public class FindGameFrame extends JFrame {
