@@ -89,7 +89,6 @@ public class UserFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                loginFrame.setClient(client);
                 loginFrame.setVisible(true);
             }
         });
@@ -99,7 +98,6 @@ public class UserFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                registerFrame.setGobangClient(client);
                 registerFrame.setVisible(true);
             }
         });

@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 @org.springframework.stereotype.Component
 public class RegisterFrame extends JFrame {
@@ -23,15 +24,9 @@ public class RegisterFrame extends JFrame {
 
     private RegisterFrame thisFrame = this;
 
-    private GobangClient gobangClient;
+    @Autowired
+    private GobangClient client;
 
-    public GobangClient getGobangClient() {
-        return gobangClient;
-    }
-
-    public void setGobangClient(GobangClient gobangClient) {
-        this.gobangClient = gobangClient;
-    }
 
     private RegisterFrame registerFrame = this ;
 
@@ -78,7 +73,7 @@ public class RegisterFrame extends JFrame {
                     pwdJpanel.cleanText();
                     reconfirmPwdJpanel.cleanText();
                 }else {
-                    boolean canRegister = gobangClient.sendMsg("register;" + email + ";" + pwd + ";");
+                    boolean canRegister = client.sendMsg("register;" + email + ";" + pwd + ";");
                     if (!canRegister){
                         emailJpanel.cleanText();
                         pwdJpanel.cleanText();
@@ -88,7 +83,13 @@ public class RegisterFrame extends JFrame {
                     }else {
                         findGameFrame.setVisible(true);
                         thisFrame.setVisible(false);
-                        boolean findGame = gobangClient.findGame();
+                        boolean findGame = false;
+                        try {
+                            findGame = client.findGame();
+                        } catch (SocketTimeoutException socketTimeoutException) {
+                            System.err.println("服务器连接失败");
+                            JOptionPane.showMessageDialog(null, "服务器连接失败", "连接失败", JOptionPane.ERROR_MESSAGE);
+                        }
                         if (!findGame){
                             JOptionPane.showMessageDialog(null, "服务器找不到对局", "创建对局失败", JOptionPane.ERROR_MESSAGE);
                             return;

@@ -1,7 +1,11 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
+import org.springframework.beans.factory.annotation.Autowired;
+import zjjxgobang.game.Gobang;
+import zjjxgobang.game.GobangClient;
 import zjjxgobang.swing.jpanel.JGamePanel;
+import zjjxgobang.swing.listener.MyWindowsCloseListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,6 +23,12 @@ public class GameFrame extends JFrame {
     private int rows = 20;
     private int cols = 20;
     private ArrayList<JGamePanel> jPanelArrayList = new ArrayList<>();
+
+    @Autowired
+    GobangClient client;
+
+    @Autowired
+    Gobang gobang;
 
     UserInfoPanel player1Panel;
     UserInfoPanel player2Panel;
@@ -42,7 +52,6 @@ public class GameFrame extends JFrame {
 
         this.setResizable(true);
         this.setSize(800, 605);
-
         Container contentPane = this.getContentPane();
 
         gobangJPanel.setSize(600,600);
@@ -64,10 +73,10 @@ public class GameFrame extends JFrame {
         usersInfoPanelBox.add(player1Panel);
         usersInfoPanelBox.add(player2Panel);
 
-
         contentPane.add(gobangJPanel,0);
         contentPane.add(usersInfoPanelBox,1);
     }
+
 
     private class GobangPanel extends JPanel{
         @Override
@@ -167,6 +176,13 @@ public class GameFrame extends JFrame {
 
         public void setValue(String s){
             value.setText(s);
+        }
+    }
+
+    public void setClientAndGobang2Jpanel(){
+        for (JGamePanel j : jPanelArrayList){
+            j.setClient(client);
+            j.setGobang(gobang);
         }
     }
 }

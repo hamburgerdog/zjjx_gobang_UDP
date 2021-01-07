@@ -32,6 +32,7 @@ public class GobangServer {
             while (true) {
                 socket.receive(request);
                 String requestStr = new String(request.getData(), 0, request.getLength(), "UTF-8");
+                System.out.println(requestStr);
                 String[] split = requestStr.split(";");
                 switch (split[0]) {
                     case "login": {
@@ -82,7 +83,7 @@ public class GobangServer {
                         break;
                     }
                     case "beginGame": {
-                        requestMap.put(split[1], request);
+                        requestMap.put(split[1], saveRequest(request));
                         if (playerMap.get(split[1]) == 1) {
                             byte[] data = "player:1".getBytes();
                             DatagramPacket response = new DatagramPacket(data, data.length, request.getAddress(), request.getPort());
@@ -98,8 +99,34 @@ public class GobangServer {
                     case "gobang": {
                         Set<String> keySet = requestMap.keySet();
                         for (String key : keySet) {
+                            if (key.equals(split[1]))
+                                continue;
                             DatagramPacket playerRequest = requestMap.get(key);
-                            byte[] data = ("id:"+split[1]).getBytes();
+                            byte[] data = ("id:"+split[2]).getBytes();
+                            DatagramPacket response = new DatagramPacket(data, data.length, playerRequest.getAddress(), playerRequest.getPort());
+                            socket.send(response);
+                        }
+                        break;
+                    }
+                    case "end":{
+                        playerMap.remove(split[2]);
+                        game_sum -= 1;
+                        byte[] data = "gameOver".getBytes();
+                        DatagramPacket response = new DatagramPacket(data, data.length, request.getAddress(), request.getPort());
+                        socket.send(response);
+                        if (split[1].equals("win")){
+                            DatagramPacket winner = requestMap.get(split[2]);
+                            data = "id:-1".getBytes();
+                            DatagramPacket winResponse = new DatagramPacket(data, data.length, winner.getAddress(), winner.getPort());
+                            socket.send(winResponse);
+                        }
+                        break;
+                    }
+                    case "exit":{
+                        Set<String> keySet = requestMap.keySet();
+                        for (String key : keySet) {
+                            DatagramPacket playerRequest = requestMap.get(key);
+                            byte[] data = "exit:".getBytes();
                             DatagramPacket response = new DatagramPacket(data, data.length, playerRequest.getAddress(), playerRequest.getPort());
                             socket.send(response);
                         }
@@ -122,5 +149,9 @@ public class GobangServer {
         }
     }
 
+    private DatagramPacket saveRequest(DatagramPacket request){
+        DatagramPacket result = new DatagramPacket(request.getData(),request.getLength(),request.getSocketAddress());
+        return result;
+    }
 
 }

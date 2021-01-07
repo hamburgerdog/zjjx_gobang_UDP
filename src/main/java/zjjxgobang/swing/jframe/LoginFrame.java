@@ -15,16 +15,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 @org.springframework.stereotype.Component
 public class LoginFrame extends JFrame {
     public LoginFrame thisFrame = this;
 
+    @Autowired
     public GobangClient client;
-
-    public void setClient(GobangClient client) {
-        this.client = client;
-    }
 
     @Autowired
     public FindGameFrame findGameFrame;
@@ -100,7 +98,13 @@ public class LoginFrame extends JFrame {
     private class FindGameTask implements Runnable{
         @Override
         public void run() {
-            boolean findGame = client.findGame();
+            boolean findGame = false;
+            try {
+                findGame = client.findGame();
+            } catch (SocketTimeoutException e) {
+                System.err.println("服务器连接失败");
+                JOptionPane.showMessageDialog(null, "服务器连接失败", "连接失败", JOptionPane.ERROR_MESSAGE);
+            }
             if (!findGame){
                 JOptionPane.showMessageDialog(null, "服务器找不到对局", "创建对局失败", JOptionPane.ERROR_MESSAGE);
                 return;
