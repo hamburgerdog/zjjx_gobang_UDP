@@ -1,5 +1,8 @@
-package zjjxgobang.jBean;
+package zjjxgobang.pojo;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class GobangPlayer {
     private String email;
     private String pwd;
@@ -8,7 +11,7 @@ public class GobangPlayer {
 
     @Override
     public String toString() {
-        return "email:"+getEmail()+";gender:外星人;winNum:"+getWinNum()+";defeatNum:"+getDefeatNum()+"\r\n";
+        return "email:"+getEmail()+";gender:外星人;winNum:"+getWinNum()+";defeatNum:"+getDefeatNum();
     }
 
     public String getEmail() {

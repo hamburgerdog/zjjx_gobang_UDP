@@ -1,8 +1,9 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
-import zjjxgobang.jBean.Player;
-import zjjxgobang.server.GobangClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import zjjxgobang.game.GobangClient;
 import zjjxgobang.swing.jpanel.ConfirmJPanel;
 import zjjxgobang.swing.jpanel.InputNormalJPanel;
 
@@ -12,18 +13,25 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
+@org.springframework.stereotype.Component
 public class RegisterFrame extends JFrame {
+    @Autowired
+    private FindGameFrame findGameFrame;
 
-    private GobangClient gobangClient;
+    private RegisterFrame thisFrame = this;
+
+    @Autowired
+    private GobangClient client;
+
+
     private RegisterFrame registerFrame = this ;
 
-    public RegisterFrame(String title, GobangClient gobangClient,UserFrame userFrame) throws HeadlessException {
-        super(title);
-        this.gobangClient = gobangClient;
+    public RegisterFrame() throws HeadlessException {
+        super("注册窗口");
         this.setSize(new Dimension(300, 200));
         this.setResizable(true);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -54,8 +62,7 @@ public class RegisterFrame extends JFrame {
         confirmButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println(emailJpanel.getMsg());
-
+                String email = emailJpanel.getMsg();
                 String pwd = pwdJpanel.getMsg();
                 String rePwd = reconfirmPwdJpanel.getMsg();
 
@@ -65,42 +72,34 @@ public class RegisterFrame extends JFrame {
                             JOptionPane.WARNING_MESSAGE);
                     pwdJpanel.cleanText();
                     reconfirmPwdJpanel.cleanText();
-                } else {
-                    Player player = gobangClient.getPlayer();
-                    if (player.getPlayerSocket() == null) {
-                        Socket socket = new Socket();
-                        try {
-                            socket.connect(gobangClient.getAddress());
-                        } catch (IOException ioException) {
-                            ioException.printStackTrace();
-                        }
-                        player.setPlayerSocket(socket);
-                    }
-                    player.setName(emailJpanel.getMsg());
-                    player.setPassword(pwdJpanel.getMsg());
-                    player.sentRegister();
-                    if (player.receviceConnectionMsg()) {
-                        registerFrame.setVisible(false);
-                        userFrame.setVisible(false);
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                gobangClient.createGame();
-                            }
-                        });
-                    } else {
-                        JOptionPane.showMessageDialog(null, "与服务器连接失败",
-                                "连接错误", JOptionPane.ERROR_MESSAGE);
+                }else {
+                    boolean canRegister = client.sendMsg("register;" + email + ";" + pwd + ";");
+                    if (!canRegister){
+                        emailJpanel.cleanText();
                         pwdJpanel.cleanText();
                         reconfirmPwdJpanel.cleanText();
+                        JOptionPane.showMessageDialog(null, "服务器拒绝注册", "注册失败", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }else {
+                        findGameFrame.setVisible(true);
+                        thisFrame.setVisible(false);
+                        boolean findGame = false;
+                        try {
+                            findGame = client.findGame();
+                        } catch (SocketTimeoutException socketTimeoutException) {
+                            System.err.println("服务器连接失败");
+                            JOptionPane.showMessageDialog(null, "服务器连接失败", "连接失败", JOptionPane.ERROR_MESSAGE);
+                        }
+                        if (!findGame){
+                            JOptionPane.showMessageDialog(null, "服务器找不到对局", "创建对局失败", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                     }
                 }
-
-                System.out.println(pwd);
-                System.out.println(rePwd);
             }
         });
     }
+
 
     private class RegisterJPanel extends JPanel {
         @Override

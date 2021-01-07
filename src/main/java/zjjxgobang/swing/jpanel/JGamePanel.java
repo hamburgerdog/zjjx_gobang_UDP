@@ -1,37 +1,82 @@
 package zjjxgobang.swing.jpanel;
 
 import org.apache.ibatis.io.Resources;
-import zjjxgobang.jBean.Gobang;
-import zjjxgobang.swing.jframe.GameFrame;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import zjjxgobang.game.Gobang;
+import zjjxgobang.game.GobangClient;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 /**
  * 棋盘中的棋子落点
  */
+@Component
+@Scope(value = "prototype")
 public class JGamePanel extends JPanel {
     public final int height = 30;
     public final int width = 30;
-    public final int Id;
+    public int Id;
     public final int radis = 5;
     public final Color lineColor = new Color(141, 143, 181);
     public final Color enterColor = new Color(165, 149, 166);
 
-    private GameFrame parent;
     private Gobang gobang;
 
-    public JGamePanel(int id,GameFrame parent) {
-        this.Id = id + 1;
+    private GobangClient client;
+
+    public void setId(int id) {
+        Id = id;
+    }
+
+    public void setGobang(Gobang gobang) {
+        this.gobang = gobang;
+    }
+
+    public void setClient(GobangClient client) {
+        this.client = client;
+    }
+
+    public JGamePanel thisPanel = this;
+
+    public JGamePanel() {
         this.setBackground(null);
         this.setOpaque(false);
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (!gobang.hasPutGobang(Id)){
+                    enterGobang();
+                }
+            }
 
-        this.parent = parent;
-        this.gobang = parent.getGobang();
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (gobang.getPlayerId() == gobang.getNowPlayeId() && !gobang.hasPutGobang(Id)){
+                    updateGobang();
+                    new Thread(new SendTask()).start();
+                }
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (!gobang.hasPutGobang(Id)){
+                    thisPanel.repaint();
+                }
+            }
+        });
+    }
+
+    public class SendTask implements Runnable{
+        @Override
+        public void run() {
+            client.sendGobang(Id);
+        }
     }
 
     @Override
@@ -41,24 +86,22 @@ public class JGamePanel extends JPanel {
         g.drawLine(0, height / 2, width, height / 2);
     }
 
-    public void updateGobang(Color color){
-        if (!gobang.doPutGobang(this.Id) && !gobang.isGameOver()) {
-            drawGobang(color);
-            gobang.putGobang(this.Id,color);
-        } else if (gobang.isGameOver()) {
-            System.out.println("game over");
-            System.out.println(gobang.getGobangMap());
+    public void updateGobang(){
+        gobang.putGobang(Id);
+        drawGobang(gobang.getNowPlayeId());
+        if (!gobang.isEnd(Id)){
+            gobang.changePlayer();
         }
     }
 
-    public void drawGobang(Color color){
+    public void drawGobang(Integer id){
         Graphics g = this.getGraphics();
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         BufferedImage img=null;
         int width=30;
         int height=30;
-        if (color.equals(Color.BLACK)) {
+        if (id == 1) {
             try {
                 img = ImageIO.read(Resources.getResourceAsStream("bang1.png"));
                 width = img.getWidth(this);

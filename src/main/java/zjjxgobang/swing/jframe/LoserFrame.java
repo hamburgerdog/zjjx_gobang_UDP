@@ -1,6 +1,8 @@
 package zjjxgobang.swing.jframe;
 
 import org.apache.ibatis.io.Resources;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import zjjxgobang.swing.listener.FrameSetUndecorated;
 
 import javax.imageio.ImageIO;
@@ -13,13 +15,16 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+@Component
 public class LoserFrame extends JFrame {
 
     private int xOld = 0;
     private int yOld = 0;
 
-    public LoserFrame(String title) throws HeadlessException {
-        super(title);
+    public LoserFrame() throws HeadlessException {
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setResizable(false);
+        this.setSize(550, 500);
         LoserPannel winnerJPanel = new LoserPannel();
         winnerJPanel.setSize(new Dimension(550,500));
         this.setContentPane(winnerJPanel);
