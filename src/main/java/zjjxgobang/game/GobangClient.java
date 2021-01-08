@@ -167,6 +167,7 @@ public class GobangClient {
             Integer id = Integer.valueOf(split[1]);
             gobang.setPlayerId(id);
             if (id == 2){
+                JOptionPane.showMessageDialog(null, "后手方，请等待对手下棋", "对局开始", JOptionPane.INFORMATION_MESSAGE);
                 socket.receive(response);
                 responseStr = new String(response.getData(), 0, response.getLength(), "UTF-8");
                 String[] split_t = responseStr.split(":");
@@ -175,7 +176,8 @@ public class GobangClient {
                 System.out.println(split_t);
                 ArrayList<JGamePanel> jGamePanels = gameFrame.getjPanelArrayList();
                 jGamePanels.get(Integer.valueOf(split_t[1])).updateGobang();
-            }
+            }else
+                JOptionPane.showMessageDialog(null, "先手方，请开始下棋", "对局开始", JOptionPane.INFORMATION_MESSAGE);
         }catch (SocketTimeoutException e){
             JOptionPane.showMessageDialog(null, "连接超时拒绝登录", "连接失败", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();

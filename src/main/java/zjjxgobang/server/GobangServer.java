@@ -34,10 +34,10 @@ public class GobangServer {
                 String requestStr = new String(request.getData(), 0, request.getLength(), "UTF-8");
                 System.out.println(requestStr);
                 String[] split = requestStr.split(";");
+                SqlSession sqlSession = mybatisUtil.getSqlSession();
+                GobangPlayerDao gobangPlayerDao = sqlSession.getMapper(GobangPlayerDao.class);
                 switch (split[0]) {
                     case "login": {
-                        SqlSession sqlSession = mybatisUtil.getSqlSession();
-                        GobangPlayerDao gobangPlayerDao = sqlSession.getMapper(GobangPlayerDao.class);
                         GobangPlayer gobangPlayer = gobangPlayerDao.searchPlayerByEmail(split[1]);
                         if (gobangPlayer == null) {
                             sendErr(request);
@@ -54,8 +54,6 @@ public class GobangServer {
                         break;
                     }
                     case "register": {
-                        SqlSession sqlSession = mybatisUtil.getSqlSession();
-                        GobangPlayerDao gobangPlayerDao = sqlSession.getMapper(GobangPlayerDao.class);
                         gobangPlayerDao.registerPlayer(split[1], split[2]);
                         GobangPlayer gobangPlayer = gobangPlayerDao.searchPlayerByEmail(split[1]);
                         if (gobangPlayer == null) {
@@ -116,10 +114,12 @@ public class GobangServer {
                         socket.send(response);
                         if (split[1].equals("win")){
                             DatagramPacket winner = requestMap.get(split[2]);
+                            gobangPlayerDao.updateWinNumByEmail(split[2]);
                             data = "id:-1".getBytes();
                             DatagramPacket winResponse = new DatagramPacket(data, data.length, winner.getAddress(), winner.getPort());
                             socket.send(winResponse);
-                        }
+                        }else
+                            gobangPlayerDao.updateDefeatNumByEmail(split[2]);
                         break;
                     }
                     case "exit":{
